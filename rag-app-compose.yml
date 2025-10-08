@@ -1,0 +1,35 @@
+services:
+  fastapi:
+    image: fastapiservice:latest
+    ports:
+      - "8000:8000"
+    networks:
+      - rag-app-network
+
+  gradio:
+    image: gradiofrontend:latest
+    ports:
+      - "7860:7860"
+    environment:
+      - FASTAPI_URL=http://fastapi:8000/query-stream  # Pass FastAPI endpoint as env
+    depends_on:
+      - fastapi
+    networks:
+      - rag-app-network
+
+networks:
+  rag-app-network:
+    external: true
+
+# docker network create rag-app-network
+
+# docker compose -f rag-app-compose.yml up -d
+# docker compose -f rag-app-compose.yml ps
+# docker start ollama
+
+# # Stop and remove the ML application containers, networks, and volumes
+# docker compose -f rag-app-compose.yml down
+# docker stop ollama
+
+# # Remove network
+# docker network rm rag-app-network

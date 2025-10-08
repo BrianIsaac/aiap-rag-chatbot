@@ -1,0 +1,39 @@
+preprocess_corpus:
+  document_store:
+    path: corpus/qdrant_data
+    index: educational_bot
+    embedding_dim: 768
+    recreate_index: false
+    return_embedding: true
+    wait_result_from_api: true
+
+  embedding_model:
+    name: nomic-embed-text
+    url: http://localhost:11434
+
+  preprocessing:
+    join_mode: concatenate
+    split_by: sentence
+    split_length: 5
+
+  converters:
+    json:
+      jq_schema: ".faq_items[]"
+      content_key: answer
+      extra_meta_fields: ["question", "url", "id", "category"]
+
+  file_types:
+    - application/pdf
+    - application/vnd.openxmlformats-officedocument.presentationml.presentation
+    - text/plain
+    - application/json
+
+  corpus_path: corpus/
+
+
+rag_evaluator:
+  log_file: logs/rag_log.csv
+  ground_truth_file: ground_truth/ground_truth.csv
+  output_file: logs/evaluation_results.csv
+  sentence_transformer_model: all-MiniLM-L6-v2
+  device: cpu
